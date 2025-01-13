@@ -2,6 +2,7 @@ import express, { json, Request, Response } from "express";
 import cors from "cors";
 import { ProductsRouter } from "./routes/products";
 import { UsersRouter } from "./routes/users";
+import { SamlRouter } from "./routes/samlCallback";
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(json());
 
 app.use(ProductsRouter);
 app.use(UsersRouter);
+app.use(SamlRouter);
 
 app.all("*", async (req: Request, res: Response) => {
   const err = new Error("Not found");
