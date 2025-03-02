@@ -9,9 +9,19 @@ dotenv.config();
 export const API_KEY = process.env.FE_API_KEY;
 export const CLIENT_ID = process.env.FE_CLIENT_ID;
 export const FE_BASE_URL = process.env.FE_BASE_URL;
-export const FE_TENANT_JWT = process.env.FE_TENANT_JWT;
+const PORT = process.env.PORT || 4000;
 
-console.log(`${API_KEY} ${CLIENT_ID}`);
+const appConfig = {
+  API_KEY,
+  CLIENT_ID,
+  FE_BASE_URL,
+  PORT,
+};
+
+Object.keys(appConfig).forEach((key) => {
+  if (!appConfig[key])
+    throw new Error(`Environment variable ${key} is undefined`);
+});
 
 const accessTokensOptions: IAccessTokensOptions = {
   cache: {
@@ -35,8 +45,8 @@ FronteggContext.init(
 const startup = async () => {
   await authenticator.init();
 
-  app.listen(3001, () => {
-    console.log("listening on 3001");
+  app.listen(PORT, () => {
+    console.log("listening on " + PORT);
   });
 };
 

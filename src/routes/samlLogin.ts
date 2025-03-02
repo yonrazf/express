@@ -1,6 +1,6 @@
 import { Request, Response, Router, urlencoded } from "express";
 import cors from "cors";
-import { FE_BASE_URL, FE_TENANT_JWT } from "..";
+import { FE_BASE_URL } from "..";
 
 const router = Router();
 
