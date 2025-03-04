@@ -30,17 +30,12 @@ app.use(
     origin: function (origin, callback) {
       callback(null, true); // Allow request
       return;
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true); // Allow request
-      } else {
-        callback(new Error("Not allowed by CORS")); // Block request
-      }
     },
   })
 );
 
 app.use(json());
-
+app.use(express.static("public"));
 app.use(
   "/frontegg",
   async () => {

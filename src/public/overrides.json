@@ -1,0 +1,26 @@
+{
+  "localizations": {
+    "en": {
+      "loginBox": {
+        "login": {
+          "title": "Sign in",
+          "emailInputLabel": "Email*",
+          "emailInputPlaceholder": "you@company.com",
+          "disclaimerText": "By signing in, you agree to the",
+          "termsLinkText": "terms and conditions"
+        },
+        "signup": {
+          "account": {
+            "title": "Sign up",
+            "nameInputLabel": "Name*",
+            "emailInputLabel": "Email*",
+            "nameInputPlaceholder": "Name McNamerson",
+            "emailInputPlaceholder": "you@company.com"
+          },
+          "disclaimerText": "I agree to the",
+          "termsLinkText": "terms and conditions"
+        }
+      }
+    }
+  }
+}
