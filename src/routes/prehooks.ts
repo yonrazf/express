@@ -15,8 +15,7 @@ router.post("/prehooks/saml", async (req: Request, res: Response) => {
     response: {
       user: {
         metadata: JSON.stringify({
-          department: eventData.data.samlMetadata.samlAttributes.department[0],
-          title: eventData.data.samlMetadata.samlAttributes.title[0],
+          groups: eventData.data.samlMetadata.samlAttributes.groups,
         }),
       },
     },
