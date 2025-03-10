@@ -7,22 +7,20 @@ router.post("/prehooks/signup", async (req: Request, res: Response) => {
 });
 
 router.post("/prehooks/saml", async (req: Request, res: Response) => {
-  console.log("received prehook with request body");
-  console.log(req.body);
-  const { body: eventData } = req;
-  let groups = [];
+  console.log("Received prehook with request body:", req.body);
+
+  let groups: string[] = [];
   try {
-    groups = eventData.data.samlMetadata.samlAttributes.groups;
+    groups = req.body?.data?.samlMetadata?.samlAttributes?.groups || [];
   } catch (err) {
-    console.log(`could not get groups from saml response: ${err}`);
+    console.error("Could not extract groups from SAML response:", err);
   }
-  res.status(200).send({
+
+  res.status(200).json({
     verdict: "allow",
     response: {
       user: {
-        metadata: JSON.stringify({
-          groups: eventData.data.samlMetadata.samlAttributes.groups,
-        }),
+        metadata: JSON.stringify({ groups }),
       },
     },
   });
