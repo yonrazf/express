@@ -9,12 +9,14 @@ dotenv.config();
 export const API_KEY = process.env.FE_API_KEY;
 export const CLIENT_ID = process.env.FE_CLIENT_ID;
 export const FE_BASE_URL = process.env.FE_BASE_URL;
+export const SAML_PREHOOK_SECRET = process.env.FE_SAML_PREHOOK_SECRET;
 const PORT = process.env.PORT || 4000;
 
 const appConfig = {
   API_KEY,
   CLIENT_ID,
   FE_BASE_URL,
+  SAML_PREHOOK_SECRET,
   PORT,
 };
 
