@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { SAML_PREHOOK_SECRET } from "..";
 import jwt from "jsonwebtoken";
+import { getVendorToken } from "../utils/getVendorToken";
 
 const router = Router();
 
@@ -45,5 +46,68 @@ router.post("/prehooks/saml", async (req: Request, res: Response) => {
     },
   });
 });
+
+router.post("/prehooks/signup", onEvent);
+
+async function onEvent(eventData) {
+  const token = await getVendorToken();
+  const query = new URLSearchParams({
+    email: eventData.data.user.email,
+  }).toString();
+
+  const userResponse = await fetch(
+    `https://api.frontegg.com/identity/resources/users/v1/email?${query}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+
+  const userData = await userResponse.json();
+
+  const { id: userId } = userData;
+
+  const activationTokenResp = await fetch(
+    `https://api.frontegg.com/identity/resources/users/v1/${userId}/links/generate-activation-token`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+
+  const activationTokenData = await activationTokenResp.json();
+
+  const activationToken = activationTokenData.token;
+
+  const resp = await fetch(
+    `https://api.frontegg.com/identity/resources/users/v1/activate`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "frontegg-vendor-host": "auth.sabich.life",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({
+        userId,
+        token: activationToken,
+      }),
+    }
+  );
+
+  if (!resp.ok) throw new Error("error in sending email " + resp);
+  const data = await resp.json();
+
+  return {
+    verdict: "allow",
+    response: {
+      status: 200,
+    },
+  };
+}
 
 export { router as PrehooksRouter };
