@@ -10,6 +10,7 @@ import { FronteggPermissions } from "./permissions";
 import dotenv from "dotenv";
 import { errorHandler } from "./middleware/error-handler";
 import { PrehooksRouter } from "./routes/prehooks";
+import { WebhooksRouter } from "./routes/webhooks";
 dotenv.config();
 const API_KEY = process.env.FE_API_KEY;
 const CLIENT_ID = process.env.FE_CLIENT_ID;
@@ -75,6 +76,7 @@ app.use(UsersRouter);
 app.use(SamlRouter);
 app.use(MetadataRouter);
 app.use(PrehooksRouter);
+app.use("/webhooks", WebhooksRouter);
 
 app.all("*", async (req: Request, res: Response) => {
   const err = new Error("Not found");
