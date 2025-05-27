@@ -151,7 +151,7 @@ async function callSamlCallback(req: Request, res: Response) {
 
     // Set the cookie with all necessary attributes
     const cookieValue = `${refreshTokenCookieKeyValue[0]}=${refreshTokenCookieKeyValue[1]}; Domain=${COOKIE_DOMAIN}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=2592000`;
-    res.setHeader("Set-Cookie", cookieValue);
+    res.append("Set-Cookie", cookieValue);
 
     console.log("[callSamlCallback] Setting response headers:", {
       origin,
@@ -163,7 +163,7 @@ async function callSamlCallback(req: Request, res: Response) {
     console.log("[callSamlCallback] Response headers set:", res.getHeaders());
 
     // Instead of redirecting directly, send a response that the client can handle
-    return res.status(200).redirect("http://localhost:5500/saml/callback");
+    return res.redirect("http://localhost:5500/saml/callback");
   } catch (err) {
     console.error("[callSamlCallback] Error processing SAML callback:", {
       error: err instanceof Error ? err.message : "Unknown error",
