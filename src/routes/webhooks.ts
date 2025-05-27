@@ -1,12 +1,10 @@
 import { Router } from "express";
 import { WebhookController } from "../controllers/webhook.controller";
-import { FronteggAuthenticator } from "@frontegg/client";
 
 const router = Router();
 
-// Initialize the webhook controller with the authenticator
-// Note: You'll need to provide the actual authenticator instance
-const webhookController = new WebhookController(new FronteggAuthenticator());
+// Initialize the webhook controller without authentication
+const webhookController = new WebhookController();
 
 // Route to trigger a webhook event
 router.post("/trigger", async (req, res) => {

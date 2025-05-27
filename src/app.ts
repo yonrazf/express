@@ -37,45 +37,15 @@ app.use(
 
 app.use(json());
 app.use(express.static("public"));
-app.use(
-  "/frontegg",
-  async () => {
-    console.log("middleware");
-  }
-  // frontegg({
-  //   clientId: CLIENT_ID,
-  //   apiKey: API_KEY,
-  //   authMiddleware: withAuthentication(),
-  //   // @ts-ignore
-  //   contextResolver: (req) => {
-  //     // @ts-ignore
-  //     // console.log(req);
-  //     // @ts-ignore
-  //     const email = req.user; // The user context (after JWT verification)
-  //     // @ts-ignore
-  //     const tenantId = req.user.tenantId; // The tenantId context (after JWT verification)
-  //     // @ts-ignore
-  //     const authenticatedEntityType = req.user.type; // The authenticated entity type (user/user api token/tenant api token) context (after JWT verification)
-  //     // @ts-ignore
-  //     const authenticatedEntityId = req.user.id; // The authenticated entity id context (after JWT verification)
-  //     const permissions = [FronteggPermissions.All];
-
-  //     return {
-  //       email,
-  //       tenantId,
-  //       permissions,
-  //       authenticatedEntityType,
-  //       authenticatedEntityId,
-  //     };
-  //   },
-  // })
-);
+app.use("/frontegg", async () => {
+  console.log("middleware");
+});
 
 app.use(ProductsRouter);
 app.use(UsersRouter);
-app.use(SamlRouter);
 app.use(MetadataRouter);
 app.use(PrehooksRouter);
+app.use(SamlRouter);
 app.use("/webhooks", WebhooksRouter);
 
 app.all("*", async (req: Request, res: Response) => {

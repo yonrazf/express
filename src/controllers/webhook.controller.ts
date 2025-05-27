@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { EventsClient } from "@frontegg/client";
-import { FronteggAuthenticator } from "@frontegg/client";
+import { authenticator } from "../auth/authenticator";
 import type { ChannelConfiguration } from "@frontegg/client/dist/src/clients/events/types/channel-configuration";
 
 interface RetryOptions {
@@ -17,8 +17,8 @@ export class WebhookController {
     backoffFactor: 2,
   };
 
-  constructor(authenticator: FronteggAuthenticator) {
-    this.eventsClient = new EventsClient(authenticator);
+  constructor() {
+    this.eventsClient = new EventsClient(authenticator.authenticatorInstance);
   }
 
   /**
