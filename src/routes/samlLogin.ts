@@ -154,6 +154,7 @@ async function callSamlCallback(req: Request, res: Response) {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      path: "/",
     });
 
     console.log("[callSamlCallback] Setting response headers:", {
