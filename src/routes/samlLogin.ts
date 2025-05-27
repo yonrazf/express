@@ -128,7 +128,7 @@ async function callSamlCallback(req: Request, res: Response) {
     console.log("[callSamlCallback] Processing SAML response body");
 
     // send a request to FE with the saml details and get back a refresh token
-    const { setCookieHeader } = await getRefreshToken(body);
+    const { setCookieHeader, refreshToken } = await getRefreshToken(body);
     console.log("[callSamlCallback] Successfully obtained refresh token");
 
     const isProduction = process.env.NODE_ENV === "production";
@@ -141,45 +141,20 @@ async function callSamlCallback(req: Request, res: Response) {
     res.setHeader("Access-Control-Expose-Headers", "set-cookie");
 
     // Forward the Set-Cookie header from Frontegg's response
-    if (setCookieHeader) {
-      // Split multiple cookies if present
-      const cookies = setCookieHeader.split(",").map((cookie) => cookie.trim());
+    const refreshTokenCookie = setCookieHeader
+      .split(",")
+      .find((cookie) => cookie.startsWith("fe_refresh_"));
+    const refreshTokenCookieParts = refreshTokenCookie
+      ?.split(";")
+      .map((part) => part.trim());
+    const refreshTokenCookieKeyValue = refreshTokenCookieParts[0].split("=");
 
-      // Process each cookie
-      const modifiedCookies = cookies.map((cookie) => {
-        // Only modify the refresh token cookie
-        if (cookie.startsWith("fe_refresh_")) {
-          const cookieParts = cookie.split(";").map((part) => part.trim());
-
-          // Find and modify the SameSite attribute
-          const sameSiteIndex = cookieParts.findIndex((part) =>
-            part.toLowerCase().startsWith("samesite=")
-          );
-          if (sameSiteIndex !== -1) {
-            cookieParts[sameSiteIndex] = "SameSite=Lax";
-          } else {
-            cookieParts.push("SameSite=Lax");
-          }
-
-          // Add or update the domain
-          const domainIndex = cookieParts.findIndex((part) =>
-            part.toLowerCase().startsWith("domain=")
-          );
-          if (domainIndex !== -1) {
-            cookieParts[domainIndex] = `Domain=${COOKIE_DOMAIN}`;
-          } else {
-            cookieParts.push(`Domain=${COOKIE_DOMAIN}`);
-          }
-
-          return cookieParts.join("; ");
-        }
-        // Return other cookies unchanged
-        return cookie;
-      });
-
-      // Set all cookies
-      res.setHeader("Set-Cookie", modifiedCookies);
-    }
+    res.cookie(refreshTokenCookieKeyValue[0], refreshTokenCookieKeyValue[1], {
+      domain: COOKIE_DOMAIN,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
     console.log("[callSamlCallback] Setting response headers:", {
       origin,
