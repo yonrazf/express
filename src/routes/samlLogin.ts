@@ -150,7 +150,7 @@ async function callSamlCallback(req: Request, res: Response) {
     const refreshTokenCookieKeyValue = refreshTokenCookieParts[0].split("=");
 
     // Set the cookie with all necessary attributes
-    const cookieValue = `${refreshTokenCookieKeyValue[0]}=${refreshTokenCookieKeyValue[1]}; Domain=${COOKIE_DOMAIN}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+    const cookieValue = `${refreshTokenCookieKeyValue[0]}=${refreshTokenCookieKeyValue[1]}; Domain=${COOKIE_DOMAIN}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=2592000`;
     res.setHeader("Set-Cookie", cookieValue);
 
     console.log("[callSamlCallback] Setting response headers:", {
