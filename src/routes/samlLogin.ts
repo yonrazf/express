@@ -17,7 +17,7 @@ const corsOptions = {
 // Apply CORS middleware to the router
 router.use(cors(corsOptions));
 
-const COOKIE_DOMAIN = null; // should be your custom domain prefixed by a '.'
+const COOKIE_DOMAIN = "api.sabich.life";
 
 interface IDPSamlResponse {
   SAMLResponse: string;
@@ -142,7 +142,43 @@ async function callSamlCallback(req: Request, res: Response) {
 
     // Forward the Set-Cookie header from Frontegg's response
     if (setCookieHeader) {
-      res.setHeader("Set-Cookie", setCookieHeader);
+      // Split multiple cookies if present
+      const cookies = setCookieHeader.split(",").map((cookie) => cookie.trim());
+
+      // Process each cookie
+      const modifiedCookies = cookies.map((cookie) => {
+        // Only modify the refresh token cookie
+        if (cookie.startsWith("fe_refresh_")) {
+          const cookieParts = cookie.split(";").map((part) => part.trim());
+
+          // Find and modify the SameSite attribute
+          const sameSiteIndex = cookieParts.findIndex((part) =>
+            part.toLowerCase().startsWith("samesite=")
+          );
+          if (sameSiteIndex !== -1) {
+            cookieParts[sameSiteIndex] = "SameSite=Lax";
+          } else {
+            cookieParts.push("SameSite=Lax");
+          }
+
+          // Add or update the domain
+          const domainIndex = cookieParts.findIndex((part) =>
+            part.toLowerCase().startsWith("domain=")
+          );
+          if (domainIndex !== -1) {
+            cookieParts[domainIndex] = `Domain=${COOKIE_DOMAIN}`;
+          } else {
+            cookieParts.push(`Domain=${COOKIE_DOMAIN}`);
+          }
+
+          return cookieParts.join("; ");
+        }
+        // Return other cookies unchanged
+        return cookie;
+      });
+
+      // Set all cookies
+      res.setHeader("Set-Cookie", modifiedCookies);
     }
 
     console.log("[callSamlCallback] Setting response headers:", {
