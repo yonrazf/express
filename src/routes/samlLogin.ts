@@ -163,7 +163,7 @@ async function callSamlCallback(req: Request, res: Response) {
     console.log("[callSamlCallback] Response headers set:", res.getHeaders());
 
     // Instead of redirecting directly, send a response that the client can handle
-    return res.redirect("http://localhost:5500/saml/callback");
+    return res.redirect("https://api.sabich.life/auth/finalize");
   } catch (err) {
     console.error("[callSamlCallback] Error processing SAML callback:", {
       error: err instanceof Error ? err.message : "Unknown error",
@@ -172,6 +172,26 @@ async function callSamlCallback(req: Request, res: Response) {
     res.status(500).send(err);
   }
 }
+
+router.get("/auth/finalize", (req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <title>Finalizing Login...</title>
+        <meta http-equiv="refresh" content="0; url=http://localhost:5500/saml/callback" />
+        <script>
+          // Bonus: fallback if meta-refresh doesn't fire
+          setTimeout(() => {
+            window.location.href = "http://localhost:5500/saml/callback";
+          }, 100);
+        </script>
+      </head>
+      <body>
+        <p>Logging you in...</p>
+      </body>
+    </html>
+  `);
+});
 
 router.post(
   "/auth/saml/callback", // your ACS URL set up on Okta will point to here
