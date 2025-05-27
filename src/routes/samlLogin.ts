@@ -162,10 +162,11 @@ async function callSamlCallback(req: Request, res: Response) {
 
     console.log("[callSamlCallback] Response headers set:", res.getHeaders());
 
-    // Set the location header for redirect
-    res.setHeader("Location", "http://localhost:5500/saml/callback");
-    // Use 302 status code for redirect
-    return res.status(302).end();
+    // Instead of redirecting directly, send a response that the client can handle
+    return res.status(200).json({
+      redirectUrl: "http://localhost:5500/saml/callback",
+      success: true,
+    });
   } catch (err) {
     console.error("[callSamlCallback] Error processing SAML callback:", {
       error: err instanceof Error ? err.message : "Unknown error",
