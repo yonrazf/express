@@ -149,23 +149,23 @@ async function callSamlCallback(req: Request, res: Response) {
       .map((part) => part.trim());
     const refreshTokenCookieKeyValue = refreshTokenCookieParts[0].split("=");
 
-    res.cookie(refreshTokenCookieKeyValue[0], refreshTokenCookieKeyValue[1], {
-      domain: COOKIE_DOMAIN,
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      path: "/",
-    });
+    // Set the cookie with all necessary attributes
+    const cookieValue = `${refreshTokenCookieKeyValue[0]}=${refreshTokenCookieKeyValue[1]}; Domain=${COOKIE_DOMAIN}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`;
+    res.setHeader("Set-Cookie", cookieValue);
 
     console.log("[callSamlCallback] Setting response headers:", {
       origin,
       hasCredentials: true,
       forwardedCookie: setCookieHeader,
+      newCookie: cookieValue,
     });
 
     console.log("[callSamlCallback] Response headers set:", res.getHeaders());
 
-    return res.status(200).redirect("http://localhost:5500/saml/callback");
+    // Set the location header for redirect
+    res.setHeader("Location", "http://localhost:5500/saml/callback");
+    // Use 302 status code for redirect
+    return res.status(302).end();
   } catch (err) {
     console.error("[callSamlCallback] Error processing SAML callback:", {
       error: err instanceof Error ? err.message : "Unknown error",
