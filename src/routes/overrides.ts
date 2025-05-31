@@ -1,82 +1,211 @@
 import { Router, Request, Response } from "express";
+import { FronteggAppOptions } from "@frontegg/types";
 import { withAuthentication } from "@frontegg/client";
 import { authenticator } from "../auth/authenticator";
 
 const router = Router();
 
+const localizations: FronteggAppOptions["localizations"] = {
+  en: {
+    loginBox: {
+      login: {
+        title: "title",
+        signUpMessage: "signUpMessage",
+        signUpLink: "signUpLink",
+        forgotPassword: "forgotPassword",
+        emailInputLabel: "emailInputLabel",
+        emailInputPlaceholder: "emailInputPlaceholder",
+        emailMustBeValid: "emailMustBeValid",
+        emailIsRequired: "emailIsRequired",
+        passwordInputLabel: "passwordInputLabel",
+        passwordInputPlaceholder: "passwordInputPlaceholder",
+        passwordMustBeCharacters: "passwordMustBeCharacters",
+        passwordIsRequired: "passwordIsRequired",
+        login: "login",
+        continue: "continue",
+        invalidTitle: "invalidTitle",
+        signInWithSocialLogin: "signInWithSocialLogin",
+        backToLogin: "backToLogin",
+        mfaTitle: "mfaTitle",
+        mfaSubtitle: "mfaSubtitle",
+        mfaAuthenticatorTitle: "mfaAuthenticatorTitle",
+        mfaInputLabel: "mfaInputLabel",
+        mfaCodeIsRequired: "mfaCodeIsRequired",
+        mfaCodeLengthAtLeast6: "mfaCodeLengthAtLeast6",
+        twoFactorCodeIsRequired: "twoFactorCodeIsRequired",
+        twoFactorCodeLengthAtLeast8: "twoFactorCodeLengthAtLeast8",
+        mfaRememberThisDevice: "mfaRememberThisDevice",
+        mfaRememberLongerThenYear: "mfaRememberLongerThenYear",
+        disableMultiFactorTitle: "disableMultiFactorTitle",
+        disableMultiFactorMessage: "disableMultiFactorMessage",
+        recoverMfaTitle: "recoverMfaTitle",
+        recoverMfaMessage: "recoverMfaMessage",
+        disabledMultiFactorClickHereButton:
+          "disabledMultiFactorClickHereButton",
+        enterRecoveryCode: "enterRecoveryCode",
+        disabledMultiFactorButton: "disabledMultiFactorButton",
+        missingPolicyErrorMessage: "missingPolicyErrorMessage",
+        magicLinkTitle: "magicLinkTitle",
+        magicLinkText: "magicLinkText",
+        magicLinkResend: "magicLinkResend",
+        magicLinkResending: "magicLinkResending",
+        invalidMagicLinkTitle: "invalidMagicLinkTitle",
+        invalidMagicLinkText: "invalidMagicLinkText",
+        smsOtcTitle: "smsOtcTitle",
+        smsOtcMessage: "smsOtcMessage",
+        smsOtcChangePhoneMessage: "smsOtcChangePhoneMessage",
+        otcTitle: "otcTitle",
+        otcMessage: "otcMessage",
+        otcInputLabel: "otcInputLabel",
+        otcInputPlaceholder: "otcInputPlaceholder",
+        otcCodeIsRequired: "otcCodeIsRequired",
+        otcContinue: "otcContinue",
+        otcHaventReceivedCode: "otcHaventReceivedCode",
+        otcResend: "otcResend",
+        otcResending: "otcResending",
+        otcInvalidLengthCode: "otcInvalidLengthCode",
+        ssoRedirectToMessage: "ssoRedirectToMessage",
+        failedOicdLoginTitle: "failedOicdLoginTitle",
+        failedOicdBackToLogin: "failedOicdBackToLogin",
+        failedSamlDefaultError: "failedSamlDefaultError",
+        failedSamlBackToLogin: "failedSamlBackToLogin",
+        joinTenantTitle: "joinTenantTitle",
+        failedJoinTenantTitle: "failedJoinTenantTitle",
+        failedJoinTenantBackButton: "failedJoinTenantBackButton",
+        forceMfaTitle: "forceMfaTitle",
+        forceMfaMessage: "forceMfaMessage",
+        forceMfaScanQueryDescription1: "forceMfaScanQueryDescription1",
+        forceMfaScanQueryDescription2: "forceMfaScanQueryDescription2",
+        forceMfaInputLabel: "forceMfaInputLabel",
+        forceMfaInputPlaceholder: "forceMfaInputPlaceholder",
+        forceMfaVerifyButton: "forceMfaVerifyButton",
+        forceMfaRememberThisDevice: "forceMfaRememberThisDevice",
+        forceMfaRememberLongerThenYear: "forceMfaRememberLongerThenYear",
+
+        disclaimerText: "disclaimerText",
+        termsLinkText: "termsLinkText",
+        termsLink: "termsLink",
+        privacyLinkText: "privacyLinkText",
+        privacyLink: "privacyLink",
+        termsAndPrivacyConjunctionText: "termsAndPrivacyConjunctionText",
+        oneTouchLoginTitle: "oneTouchLoginTitle",
+        oneTouchLoginMessage: "oneTouchLoginMessage",
+        oneTouchLoginButton: "oneTouchLoginButton",
+        touchId: "touchId",
+        androidLoginTitle: "androidLoginTitle",
+        androidLoginMessage: "androidLoginMessage",
+        androidLoginButton: "androidLoginButton",
+        android: "android",
+        usbLoginTitle: "usbLoginTitle",
+        usbLoginMessage: "usbLoginMessage",
+        usbLoginButton: "usbLoginButton",
+        usb: "usb",
+        smsLoginTitle: "smsLoginTitle",
+        smsLoginMessage: "smsLoginMessage",
+        smsLoginButton: "smsLoginButton",
+        sms: "sms",
+        smsLoginChangePhoneTitle: "smsLoginChangePhoneTitle",
+        smsLoginChangePhoneMessage: "smsLoginChangePhoneMessage",
+        smsLoginChangePhoneInputLabel: "smsLoginChangePhoneInputLabel",
+        smsLoginChangePhoneButton: "smsLoginChangePhoneButton",
+        smsLoginPinTitle: "smsLoginPinTitle",
+        smsLoginPinMessage: "smsLoginPinMessage",
+        smsLoginPinButton: "smsLoginPinButton",
+        loginWelcomeTitle: "loginWelcomeTitle",
+        loginWelcomeSubtitleSubtitle: "loginWelcomeSubtitleSubtitle",
+        loginWelcomeKnownUserSubtitle: "loginWelcomeKnownUserSubtitle",
+        registerNewQuickLoginTitle: "registerNewQuickLoginTitle",
+        registerNewQuickLoginTitleWithSocial:
+          "registerNewQuickLoginTitleWithSocial",
+        registerNewQuickLoginSubtitle: "registerNewQuickLoginSubtitle",
+        phoneIsRequired: "phoneIsRequired",
+        phoneIsInvalid: "phoneIsInvalid",
+        forceEnrollMfaTitle: "forceEnrollMfaTitle",
+        forceEnrollMfaSubtitle: "forceEnrollMfaSubtitle",
+        forceEnrollMfaAuthenticatorApp: "forceEnrollMfaAuthenticatorApp",
+        forceEnrollMfaAuthenticatorAppDescription:
+          "forceEnrollMfaAuthenticatorAppDescription",
+        forceEnrollMfaSMS: "forceEnrollMfaSMS",
+        forceEnrollMfaPlatform: "forceEnrollMfaPlatform",
+        forceEnrollMfaCrossPlatform: "forceEnrollMfaCrossPlatform",
+        forceEnrollMfaCrossPlatformDescription:
+          "forceEnrollMfaCrossPlatformDescription",
+        preEnrollMfaSMSTitle: "preEnrollMfaSMSTitle",
+        preEnrollMfaSMSSubtitle: "preEnrollMfaSMSSubtitle",
+        preEnrollMfaSMSSubmitButtonMessage:
+          "preEnrollMfaSMSSubmitButtonMessage",
+        mfaSMSTitle: "mfaSMSTitle",
+        mfaSMSSubtitle: "mfaSMSSubtitle",
+        mfaSMSResendCode: "mfaSMSResendCode",
+        enrollMfaSMSBackMessage: "enrollMfaSMSBackMessage",
+        moreWaysToAuthenticate: "moreWaysToAuthenticate",
+        loginMfaSMS: "loginMfaSMS",
+        loginMfaSMSDescription: "loginMfaSMSDescription",
+        loginMfaPlatform: "loginMfaPlatform",
+        loginMfaPlatformDescription: "loginMfaPlatformDescription",
+        loginMfaCrossPlatform: "loginMfaCrossPlatform",
+        loginMfaCrossPlatformDescription: "loginMfaCrossPlatformDescription",
+        loginMfaAuthenticatorApp: "loginMfaAuthenticatorApp",
+        loginMfaAuthenticatorAppDescription:
+          "loginMfaAuthenticatorAppDescription",
+        loginMfaAuthenticatorAppTitle: "loginMfaAuthenticatorAppTitle",
+        loginMfaHelpMessage: "loginMfaHelpMessage",
+        useRecoveryCode: "useRecoveryCode",
+      },
+      socialLogins: {
+        socialloginMainButtonTextPrefix: "socialloginMainButtonTextPrefix",
+        socialloginButtonTextPrefix: "socialloginButtonTextPrefix",
+        socialsignUpMainButtonTextPrefix: "socialsignUpMainButtonTextPrefix",
+        socialsignUpButtonTextPrefix: "socialsignUpButtonTextPrefix",
+        socialactivationMainButtonTextPrefix:
+          "socialactivationMainButtonTextPrefix",
+        socialactivationButtonTextPrefix: "socialactivationButtonTextPrefix",
+        invalidTitle: "invalidTitle",
+        failedBackToLogin: "failedBackToLogin",
+        failedInvalidCallbackUrl: "failedInvalidCallbackUrl",
+      },
+      signup: {
+        title: "title",
+        firstNameInputLabel: "firstNameInputLabel",
+        firstNameInputPlaceholder: "firstNameInputPlaceholder",
+        lastNameInputLabel: "lastNameInputLabel",
+        lastNameInputPlaceholder: "lastNameInputPlaceholder",
+        emailInputLabel: "emailInputLabel",
+        emailInputPlaceholder: "emailInputPlaceholder",
+        passwordInputLabel: "passwordInputLabel",
+        passwordInputPlaceholder: "passwordInputPlaceholder",
+        confirmPasswordInputLabel: "confirmPasswordInputLabel",
+        confirmPasswordInputPlaceholder: "confirmPasswordInputPlaceholder",
+        signupButtonText: "signupButtonText",
+      },
+      forgetPassword: {
+        title: "title",
+        description: "description",
+        emailInputLabel: "emailInputLabel",
+        emailInputPlaceholder: "emailInputPlaceholder",
+        emailMustBeValid: "emailMustBeValid",
+        emailIsRequired: "emailIsRequired",
+        submitButtonText: "submitButtonText",
+        backToLogin: "backToLogin",
+        resetEmailSentTitle: "resetEmailSentTitle",
+        resetEmailSentMessage: "resetEmailSentMessage",
+      },
+    },
+  },
+};
+
+const themeV2: FronteggAppOptions["themeOptions"] = {
+  loginBox: {
+    boxStyle: {
+      boxShadow: "none",
+    },
+  },
+};
+
 router.get("/overrides", (req: Request, res: Response) => {
   res.send({
-    localizations: {
-      en: {
-        loginBox: {
-          login: {
-            signUpMessage: "",
-          },
-        },
-      },
-    },
-    themeV2: {
-      loginBox: {
-        boxStyle: {
-          boxShadow: "none",
-        },
-        boxFooter: {
-          html: '<!DOCTYPE html>\n                        <html lang="en">\n                        <head>\n                            <meta charset="UTF-8">\n                            <meta name="viewport" content="width=device-width, initial-scale=1.0">\n                            <title>Login Page</title>\n                            <style>\n                                .footer-container {\n                                    display: flex;\n                                    flex-direction: column;\n                                    align-items: center;\n                                    gap: 20px;\n                                }\n                                .footer-text {\n                                    text-align: center;\n                                    margin-top: 30px;\n                                    color: #1C1D22;\n                                    font-family: \'DM Sans\';\n                                    font-size: 12px;\n                                    font-weight: 400;\n                                }\n                                .footer-link {\n                                    color: #1C1D22;\n                                    text-decoration: underline;\n                                }\n                                .footer-link:hover {\n                                    text-decoration: underline;\n                                }\n                                .contact-text {\n                                    font-family: \'DM Sans\';\n                                    font-size: 12px;\n                                    font-weight: 400;\n                                    color: #6947CF;\n                                }\n                                .contact-link {\n                                    color: #6947CF;\n                                    text-decoration: none;\n                                }\n                                .contact-link:hover {\n                                    color: #5029AB; /* Darker purple shade for hover, change as needed */\n                                }\n                            </style>\n                        </head>\n                        <body>\n                            <div class="footer-container">\n                                <div class="footer-text">\n                                    <p>\n                                        By signing in, I agree to the \n                                        <a href="" target="_blank" rel="noopener noreferrer" class="footer-link">Terms of Use</a> \n                                        and \n                                        <a href="" target="_blank" rel="noopener noreferrer" class="footer-link">Privacy Policy</a>.\n                                    </p>\n                                </div>\n                                <p class="contact-text">\n                                    Contact us: <a href="mailto:" class="contact-link">support@</a>\n                                </p>\n                            </div>\n                        </body>\n                        </html>                                       \n                    ',
-          type: "inline",
-        },
-        login: {
-          disclaimer: {
-            textStyle: {
-              display: "none",
-            },
-          },
-        },
-        inputTheme: {
-          base: {
-            borderRadius: "8px",
-          },
-        },
-        passkeysButtonTheme: {
-          hover: {
-            backgroundColor: "#0C1A40",
-            color: "#FFFFFF",
-          },
-          base: {
-            color: "#737582",
-            background: "#DDDEE3",
-          },
-        },
-        submitButtonTheme: {
-          base: {
-            backgroundColor: "#6947CF",
-          },
-          hover: {
-            backgroundColor: "#0C1A40",
-          },
-        },
-        layout: {
-          type: "float-left",
-          splitSize: 50,
-          sideElement: {
-            html: '<!DOCTYPE html>\n                            <html lang="en">\n                            <head>\n                                <meta charset="UTF-8">\n                                <meta name="viewport" content="width=device-width, initial-scale=1.0">\n                                <title>Login Page</title>\n                                <style>\n                                    .fe-page-side-element {\n                                        background-image: none !important;\n                                    }\n\n                                    .sideElementContainer {\n                                        pointer-events: none;\n                                        user-select: none;\n                                        width: 100%;\n                                        height: 100vh;\n                                        display: flex;\n                                        flex-direction: column;\n                                        justify-content: center;\n                                        align-items: center;\n                                        position: relative;\n                                    }\n                                    .sideElementLogo {\n                                        z-index: 10;\n                                    }\n                                    .sideElementDecorativeImage {\n                                        position: absolute;\n                                        top: 50%;\n                                        right: 0;\n                                        height: max(50%, 500px);\n                                        width: max(50%, 500px);\n                                        transform: translateY(-50%);\n                                        mix-blend-mode: multiply;\n                                    }\n                                </style>\n                            </head>\n                            <body>\n                                <div class="sideElementContainer">\n                                    <img src="https://blog.snappymob.com/wp-content/uploads/2020/12/8-Tips-for-Designing-Empty-Placeholder-Pages-Leni-Featured.png" alt="Login Text" class="sideElementLogo">\n                                    <img src="https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Decorative Background" class="sideElementDecorativeImage">\n                                </div>\n                            </body>\n                            </html>',
-            type: "inline",
-          },
-        },
-        rootStyle: {
-          background: "linear-gradient(180deg, #26115D 0%, #8C6AE7 100%)",
-        },
-        boxMessageStyle: {
-          display: "none",
-        },
-        boxTitleStyle: {
-          display: "none",
-        },
-        logo: {
-          image:
-            "https://st2.depositphotos.com/4035913/6124/i/450/depositphotos_61243733-stock-illustration-business-company-logo.jpg",
-        },
-      },
-    },
+    localizations,
+    themeV2,
   });
 });
 

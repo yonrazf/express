@@ -1,5 +1,6 @@
 import { Request, Response, Router, urlencoded } from "express";
 import cors from "cors";
+import { handleSamlFlowErrors } from "../utils/samlUtils";
 
 const FE_BASE_URL = "https://auth.sabich.life";
 
@@ -66,30 +67,10 @@ async function getRefreshToken(
       location,
     });
 
-    if (!location) {
-      console.error(
-        "[getRefreshToken] Error: No location header found in redirect response"
-      );
-      throw new Error("could not find location to get request cookies");
-    }
-
-    const urlParams = new URLSearchParams(new URL(location).search);
-    const error = urlParams.get("samlerrors");
-
-    if (error) {
-      console.error("[getRefreshToken] SAML error detected:", error);
-      throw new Error(error);
-    }
-
-    if (!setCookieHeader) {
-      console.error(
-        "[getRefreshToken] Error: No Set-Cookie header in response"
-      );
-      throw new Error("No cookies returned in the response!");
-    }
+    handleSamlFlowErrors(location, setCookieHeader);
 
     // Extract the refresh token from the `Set-Cookie` header
-    const refreshTokenMatch = setCookieHeader.match(/fe_refresh_[^=]+=[^;]+/);
+    const refreshTokenMatch = setCookieHeader!.match(/fe_refresh_[^=]+=[^;]+/);
     const refreshToken = refreshTokenMatch ? refreshTokenMatch[0] : null;
 
     if (refreshToken) {
@@ -123,11 +104,9 @@ async function callSamlCallback(req: Request, res: Response) {
   });
 
   try {
-    // The IdP will send a body with SAMLRequest and RelayState
     let { body } = req;
     console.log("[callSamlCallback] Processing SAML response body");
 
-    // send a request to FE with the saml details and get back a refresh token
     const { setCookieHeader, refreshToken } = await getRefreshToken(body);
     console.log("[callSamlCallback] Successfully obtained refresh token");
 
@@ -160,10 +139,30 @@ async function callSamlCallback(req: Request, res: Response) {
       newCookie: cookieValue,
     });
 
-    console.log("[callSamlCallback] Response headers set:", res.getHeaders());
+    // Instead of sending a 200 response, send an HTML page that will handle the redirect
+    res.send(`
+      <html>
+        <head>
+          <title>Processing Login...</title>
+          <script>
+            // Function to handle the redirect
+            function redirect() {
+              // Redirect to the target URL
+              window.location.href = "http://localhost:5500/saml/callback";
+            }
 
-    // Instead of redirecting directly, send a response that the client can handle
-    return res.redirect("https://api.sabich.life/auth/finalize");
+            // Try to redirect immediately
+            redirect();
+
+            // Fallback if immediate redirect fails
+            setTimeout(redirect, 100);
+          </script>
+        </head>
+        <body>
+          <p>Processing your login...</p>
+        </body>
+      </html>
+    `);
   } catch (err) {
     console.error("[callSamlCallback] Error processing SAML callback:", {
       error: err instanceof Error ? err.message : "Unknown error",
@@ -178,12 +177,21 @@ router.get("/auth/finalize", (req, res) => {
     <html>
       <head>
         <title>Finalizing Login...</title>
-        <meta http-equiv="refresh" content="0; url=http://localhost:5500/saml/callback" />
         <script>
-          // Bonus: fallback if meta-refresh doesn't fire
-          setTimeout(() => {
+          // Function to handle the redirect
+          function redirect() {
+            // Get all cookies from the current domain
+            const cookies = document.cookie;
+            
+            // Redirect to the target URL
             window.location.href = "http://localhost:5500/saml/callback";
-          }, 100);
+          }
+
+          // Try to redirect immediately
+          redirect();
+
+          // Fallback if immediate redirect fails
+          setTimeout(redirect, 100);
         </script>
       </head>
       <body>
