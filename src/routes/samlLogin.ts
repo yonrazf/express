@@ -130,7 +130,14 @@ async function callSamlCallback(req: Request, res: Response) {
 
     // Set the cookie with all necessary attributes
     const cookieValue = `${refreshTokenCookieKeyValue[0]}=${refreshTokenCookieKeyValue[1]}; Domain=${COOKIE_DOMAIN}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=2592000`;
-    res.append("Set-Cookie", cookieValue);
+    // res.append("Set-Cookie", cookieValue);
+    res.cookie(refreshTokenCookieKeyValue[0], refreshTokenCookieKeyValue[1], {
+      domain: COOKIE_DOMAIN,
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
     console.log("[callSamlCallback] Setting response headers:", {
       origin,
@@ -140,29 +147,8 @@ async function callSamlCallback(req: Request, res: Response) {
     });
 
     // Instead of sending a 200 response, send an HTML page that will handle the redirect
-    res.send(`
-      <html>
-        <head>
-          <title>Processing Login...</title>
-          <script>
-            // Function to handle the redirect
-            function redirect() {
-              // Redirect to the target URL
-              window.location.href = "http://localhost:5500/saml/callback";
-            }
-
-            // Try to redirect immediately
-            redirect();
-
-            // Fallback if immediate redirect fails
-            setTimeout(redirect, 100);
-          </script>
-        </head>
-        <body>
-          <p>Processing your login...</p>
-        </body>
-      </html>
-    `);
+    res.location("http://api.sabich.life/account/saml/callback");
+    res.redirect(302, "http://localhost:5500/saml/callback");
   } catch (err) {
     console.error("[callSamlCallback] Error processing SAML callback:", {
       error: err instanceof Error ? err.message : "Unknown error",
@@ -172,33 +158,8 @@ async function callSamlCallback(req: Request, res: Response) {
   }
 }
 
-router.get("/auth/finalize", (req, res) => {
-  res.send(`
-    <html>
-      <head>
-        <title>Finalizing Login...</title>
-        <script>
-          // Function to handle the redirect
-          function redirect() {
-            // Get all cookies from the current domain
-            const cookies = document.cookie;
-            
-            // Redirect to the target URL
-            window.location.href = "http://localhost:5500/saml/callback";
-          }
-
-          // Try to redirect immediately
-          redirect();
-
-          // Fallback if immediate redirect fails
-          setTimeout(redirect, 100);
-        </script>
-      </head>
-      <body>
-        <p>Logging you in...</p>
-      </body>
-    </html>
-  `);
+router.get("/account/saml/callback", (req, res) => {
+  res.status(200).send();
 });
 
 router.post(
