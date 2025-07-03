@@ -110,7 +110,7 @@ async function onEvent(eventData) {
   };
 }
 
-router.post("/prehooks/timeout ", async (req: Request, res: Response) => {
+router.post("/prehooks/timeout", async (req: Request, res: Response) => {
   await new Promise((resolve) => setTimeout(resolve, 15000));
   res.status(504).send({
     verdict: "block",
