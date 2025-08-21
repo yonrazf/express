@@ -25,27 +25,13 @@ Object.keys(appConfig).forEach((key) => {
     throw new Error(`Environment variable ${key} is undefined`);
 });
 
-const accessTokensOptions: IAccessTokensOptions = {
-  cache: {
-    type: "redis",
-    options: {
-      url: "redis[s]://[[username][:password]@]172.17.0.2:6379",
-    },
-  },
-};
-
-FronteggContext.init(
-  {
-    FRONTEGG_CLIENT_ID: process.env.FE_CLIENT_ID,
-    FRONTEGG_API_KEY: process.env.FE_API_KEY,
-  },
-  {
-    accessTokensOptions,
-  }
-);
+FronteggContext.init({
+  FRONTEGG_CLIENT_ID: process.env.FE_CLIENT_ID,
+  FRONTEGG_API_KEY: process.env.FE_API_KEY,
+});
 
 const startup = async () => {
-  await authenticator.init();
+  await authenticator.authenticatorInstance.init(CLIENT_ID, API_KEY);
 
   app.listen(PORT, () => {
     console.log("listening on " + PORT);

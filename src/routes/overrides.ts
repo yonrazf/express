@@ -196,6 +196,50 @@ const localizations: FronteggAppOptions["localizations"] = {
 
 const themeV2: FronteggAppOptions["themeOptions"] = {
   loginBox: {
+    login: {
+      boxHeader: {
+        html: `<html><head><style>
+        @media (min-width: 0px) {
+          :root[data-path*="sign-up"] #frontegg-custom-header {
+            display: none !important;
+          }
+        }
+      </style>
+      
+     </head><body> <div id="frontegg-custom-header" style="position: relative; top: 60px; left: 0; right: 0; display: flex; justify-content: center; align-items: center; width: 100%;">
+      <a href="https://www.google.com">My custom header</a>
+      </div></body></html>`,
+        type: "inline",
+        scriptTags: [
+          {
+            inlineCode: `(function() {
+              // Prevent multiple executions
+              if (window._headerPathCheckInitialized) return;
+              window._headerPathCheckInitialized = true;
+
+              function updatePath() {
+                document.documentElement.setAttribute('data-path', window.location.pathname);
+              }
+              // Update on load
+              updatePath();
+              // Update on navigation
+              window.addEventListener('popstate', updatePath);
+              // Override history methods
+              const originalPushState = history.pushState;
+              history.pushState = function() {
+                originalPushState.apply(this, arguments);
+                updatePath();
+              };
+              const originalReplaceState = history.replaceState;
+              history.replaceState = function() {
+                originalReplaceState.apply(this, arguments);
+                updatePath();
+              };
+            })();`,
+          },
+        ],
+      },
+    },
     boxStyle: {
       boxShadow: "none",
     },

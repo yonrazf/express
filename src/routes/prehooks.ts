@@ -6,7 +6,32 @@ import { getVendorToken } from "../utils/getVendorToken";
 const router = Router();
 
 router.post("/prehooks/signup", async (req: Request, res: Response) => {
-  res.status(200).send({ message: "asd" });
+  // fc372d4f-788e-4429-a447-5b549a58c835
+  // add logs here
+  console.log(
+    "[SIGNUP_HANDLER] Received prehook with request method:",
+    req.method
+  );
+  console.log("[SIGNUP_HANDLER] Received prehook with request url:", req.url);
+  console.log(
+    "[SIGNUP_HANDLER] Received prehook with request query:",
+    req.query
+  );
+  console.log(
+    "[SIGNUP_HANDLER] Received prehook with request params:",
+    req.params
+  );
+  console.log("[SIGNUP_HANDLER] Received prehook with request body:", req.body);
+
+  res.status(200).send({
+    verdict: "allow",
+
+    response: {
+      user: {
+        roleIds: ["fc372d4f-788e-4429-a447-5b549a58c835"],
+      },
+    },
+  });
 });
 
 router.post("/prehooks/saml", async (req: Request, res: Response) => {

@@ -11,13 +11,13 @@ export class AuthenticatorWrapper {
     this.authenticatorInstance = new FronteggAuthenticator();
   }
 
-  public async init() {
-    await this.authenticatorInstance.init(clientId, apiKey);
-  }
+  // public async init() {
+  //   await this.authenticatorInstance.init(clientId, apiKey);
+  // }
 }
 
 const authenticator = new AuthenticatorWrapper();
 
-authenticator.init();
+authenticator.authenticatorInstance.init(clientId, apiKey);
 
 export { authenticator };

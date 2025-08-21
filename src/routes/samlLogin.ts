@@ -137,6 +137,7 @@ async function callSamlCallback(req: Request, res: Response) {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      expires: new Date(Date.now() + 2592000 * 1000),
     });
 
     console.log("[callSamlCallback] Setting response headers:", {
